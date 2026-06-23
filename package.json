@@ -1,32 +1,35 @@
 {
-  "name": "insta-like",
+  "name": "ocatarinav2",
   "version": "1.0.0",
-  "description": "API do instagram",
+  "description": "API Node.js com Express",
   "main": "./bin/server.js",
   "scripts": {
     "start": "node ./bin/server.js",
-    "debug": "nodemon ./bin/server.js"
+    "dev": "nodemon ./bin/server.js",
+    "debug": "nodemon ./bin/server.js",
+    "vercel-build": "echo \"No build step required\""
   },
   "engines": {
     "node": "24.x"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/kadupenido/insta-like.git"
+    "url": "https://github.com/joaords98-ctrl/ocatarinav2.git"
   },
-  "author": "Carlos Eduardo Penido",
   "license": "ISC",
   "devDependencies": {
     "nodemon": "^1.14.7"
   },
   "dependencies": {
     "axios": "^0.17.1",
+    "bluebird": "^3.5.1",
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
     "express": "^4.16.2",
     "express-bearer-token": "^2.1.1",
     "instagram-private-api": "^0.6.7",
     "jsonwebtoken": "^8.1.0",
+    "lodash": "^4.17.4",
     "mongoose": "^4.13.8",
     "morgan": "^1.9.0"
   }

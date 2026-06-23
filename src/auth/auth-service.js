@@ -3,6 +3,9 @@ var config = require('../config');
 var Client = require('instagram-private-api').V1;
 
 exports.generateToken = async (data) => {
+    if (!data || !data.user || !data.password) {
+        throw 'Usuário e senha são obrigatórios.';
+    }
 
     const device = new Client.Device(data.user);
     const storage = new Client.CookieFileStorage(__dirname + '/cookies/' + data.user + '.json');
@@ -25,42 +28,37 @@ exports.decodeToken = async (token) => {
 }
 
 exports.authorize = async (token) => {
-
-    if (token) {
-        return jwt.verify(token, config.privateKey, async (error, decoded) => {
-            if (error) {
-                return {
-                    success: false,
-                    message: 'Invalid token.'
-                }
-            } else {
-
-                try {
-                    const device = new Client.Device(decoded.data);
-                    const storage = new Client.CookieFileStorage(__dirname + '/cookies/' + decoded.data + '.json');
-                    const session = new Client.Session(device, storage);
-
-                    const accountId = await session.getAccountId();
-
-                    return {
-                        success: true,
-                        session: session,
-                        accountId: accountId
-                    }
-
-                } catch (e) {
-
-                    return {
-                        success: false,
-                        message: 'Invalid session.'
-                    }
-                }
-            }
-        });
-    } else {
+    if (!token) {
         return {
             success: false,
             message: 'Restrict access.'
+        };
+    }
+
+    try {
+        const decoded = jwt.verify(token, config.privateKey);
+
+        if (!decoded || !decoded.data) {
+            return {
+                success: false,
+                message: 'Invalid token.'
+            };
         }
+
+        const device = new Client.Device(decoded.data);
+        const storage = new Client.CookieFileStorage(__dirname + '/cookies/' + decoded.data + '.json');
+        const session = new Client.Session(device, storage);
+        const accountId = await session.getAccountId();
+
+        return {
+            success: true,
+            session: session,
+            accountId: accountId
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: 'Invalid token or session.'
+        };
     }
 }
