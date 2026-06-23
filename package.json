@@ -1,14 +1,14 @@
 {
   "name": "insta-like",
   "version": "1.0.0",
-  "description": "API do instagram para ganhar seguidores",
+  "description": "API do instagram",
   "main": "./bin/server.js",
   "scripts": {
     "start": "node ./bin/server.js",
     "debug": "nodemon ./bin/server.js"
   },
   "engines": {
-    "node": "8.9.1"
+    "node": "24.x"
   },
   "repository": {
     "type": "git",
