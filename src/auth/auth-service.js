@@ -1,6 +1,20 @@
+var fs = require('fs');
+var os = require('os');
+var path = require('path');
 var jwt = require('jsonwebtoken');
 var config = require('../config');
 var Client = require('instagram-private-api').V1;
+
+function getCookieStorage(username) {
+    const safeUsername = String(username || 'session').replace(/[^a-zA-Z0-9._-]/g, '_');
+    const cookiesDir = path.join(os.tmpdir(), 'insta-like-cookies');
+
+    if (!fs.existsSync(cookiesDir)) {
+        fs.mkdirSync(cookiesDir, { recursive: true });
+    }
+
+    return new Client.CookieFileStorage(path.join(cookiesDir, safeUsername + '.json'));
+}
 
 exports.generateToken = async (data) => {
     if (!data || !data.user || !data.password) {
@@ -8,7 +22,7 @@ exports.generateToken = async (data) => {
     }
 
     const device = new Client.Device(data.user);
-    const storage = new Client.CookieFileStorage(__dirname + '/cookies/' + data.user + '.json');
+    const storage = getCookieStorage(data.user);
 
     let session = new Client.Session(device, storage);
     session = await Client.Session.login(session, data.user, data.password);
@@ -46,7 +60,7 @@ exports.authorize = async (token) => {
         }
 
         const device = new Client.Device(decoded.data);
-        const storage = new Client.CookieFileStorage(__dirname + '/cookies/' + decoded.data + '.json');
+        const storage = getCookieStorage(decoded.data);
         const session = new Client.Session(device, storage);
         const accountId = await session.getAccountId();
 
